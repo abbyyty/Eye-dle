@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, LogOut, Clock, Activity, Flame } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+import { getHongKongDateString } from '@/lib/hongKongTime';
 import {
   Table,
   TableBody,
@@ -144,9 +145,9 @@ const Data = () => {
 
   if (!user) return null;
 
-  // Get today's data for pie charts
-  const today = new Date().toISOString().split('T')[0];
-  const todayData = data.find(d => d.date === today);
+  // Get today's data for pie charts (use HKT date logic)
+  const todayHKT = getHongKongDateString();
+  const todayData = data.find(d => d.date === todayHKT);
 
   // Screen Time Pie Chart Data
   const screenTimeSeconds = intervalToSeconds(todayData?.daily_screen_time ?? '00:00:00');

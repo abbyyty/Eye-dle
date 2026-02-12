@@ -44,6 +44,7 @@ EXECUTE FUNCTION public.update_updated_at_column();
 -- Create profiles table for username storage
 CREATE TABLE public.profiles (
   id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL,
   username text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now()
 );

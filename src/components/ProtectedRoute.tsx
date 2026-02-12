@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const location = useLocation();
   const [consentChecked, setConsentChecked] = useState(false);
   const [hasConsent, setHasConsent] = useState(false);
@@ -16,6 +16,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   useEffect(() => {
     if (!user) {
       setConsentChecked(false);
+      setHasConsent(false);
       return;
     }
     let cancelled = false;
@@ -24,14 +25,20 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       .select('id')
       .eq('user_id', user.id)
       .maybeSingle()
-      .then(({ data }) => {
-        if (!cancelled) {
-          setHasConsent(!!data);
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          // 若查詢出錯，強制登出避免卡死
+          signOut();
+          setHasConsent(false);
           setConsentChecked(true);
+          return;
         }
+        setHasConsent(!!data);
+        setConsentChecked(true);
       });
     return () => { cancelled = true; };
-  }, [user, location.pathname]);
+  }, [user, location.pathname, signOut]);
 
   if (loading || (user && !consentChecked)) {
     return (

@@ -29,7 +29,7 @@ export default function Consent() {
     try {
       await supabase.from('consent_records').insert({
         user_id: user.id,
-        username: username ?? '',
+        username: username || user.user_metadata?.username || '',
         email: user.email ?? '',
         consent_given: true,
         consent_text_version: 'v1',

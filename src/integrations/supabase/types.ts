@@ -1,3 +1,5 @@
+import { StringDecoder } from "string_decoder"
+
 export type Json =
   | string
   | number
